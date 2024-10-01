@@ -3,6 +3,7 @@ package com.example.recetario
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.TextView
+import com.example.weamala.R
 
 class RecipeDetailActivity : AppCompatActivity() {
 
