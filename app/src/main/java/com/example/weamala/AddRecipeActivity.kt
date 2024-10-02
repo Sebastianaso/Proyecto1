@@ -21,7 +21,7 @@ class AddRecipeActivity : AppCompatActivity() {
         recipeName = findViewById(R.id.recipeName)
         recipeIngredients = findViewById(R.id.recipeIngredients)
         recipeInstructions = findViewById(R.id.recipeInstructions)
-        saveRecipeButton = findViewById(R.id.saveRecipeButton)
+        saveRecipeButton = findViewById(R.id.buttonSaveRecipe)
 
         saveRecipeButton.setOnClickListener {
             val name = recipeName.text.toString()
