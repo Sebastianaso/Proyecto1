@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">weamala</string>
+    <string name="app_name">Weamala</string>
+    <string name="recipe_image_desc">Recetario</string>
+    <!-- Otras cadenas aquí -->
 </resources>
