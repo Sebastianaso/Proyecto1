@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">AndroidXd</string>
+    <string name="recipe_image_desc">Descripción de la imagen de la receta</string>
+    <string name="recipe_title">Recipe Title</string>
+    <string name="ingredients_list_here">Ingredients: List here...</string>
+    <string name="instructions_detailed_steps_here">Instructions: Detailed steps here...</string>
+    <string name="recipe_title1">Recipe Title</string>
+    <string name="instructions">Instructions</string>
+    <string name="add_image">Add Image</string>
+    <string name="save_recipe">Save Recipe</string>
+    <string name="todo">TODO</string>
+</resources>
