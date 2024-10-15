@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -10,7 +11,8 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".RecipeDetailActivity">
+        tools:context=".RecipeDetailActivity"
+        tools:ignore="RedundantNamespace">
 
         <ImageView
             android:id="@+id/recipeImage"
@@ -33,7 +35,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_margin="16dp"
-            android:text="Recipe Title"/>
+            android:text="@string/recipe_title"/>
 
         <TextView
             android:id="@+id/recipeIngredients"
@@ -44,7 +46,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_margin="16dp"
-            android:text="Ingredients: List here..."/>
+            android:text="@string/ingredients_list_here"/>
 
         <TextView
             android:id="@+id/recipeInstructions"
@@ -55,7 +57,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_margin="16dp"
-            android:text="Instructions: Detailed steps here..."/>
+            android:text="@string/instructions_detailed_steps_here"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
