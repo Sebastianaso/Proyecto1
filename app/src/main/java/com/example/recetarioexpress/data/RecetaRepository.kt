@@ -103,7 +103,7 @@ object RecetaRepository {
                 ingredientes = listOf("Tortillas", "Carne de res", "Guacamole", "Queso"),
                 materiales = listOf("Sartén", "Cuchillo"),
                 instrucciones = "1. Cocinar la carne. 2. Montar los tacos...",
-                imagenUrl = "https://www.example.com/tacos.jpg"
+                imagenUrl = "https://www.gourmet.cl/wp-content/uploads/2021/08/Tacos_Carne_Interior_Gourmet.jpg"
             ),
             Receta(
                 id = "12",
@@ -112,7 +112,7 @@ object RecetaRepository {
                 ingredientes = listOf("Harina", "Huevos", "Leche", "Mantequilla"),
                 materiales = listOf("Sartén", "Batidora"),
                 instrucciones = "1. Mezclar los ingredientes. 2. Cocinar en una sartén...",
-                imagenUrl = "https://www.example.com/panqueques.jpg"
+                imagenUrl = "https://osojimix.com/wp-content/uploads/2021/07/PANCAKES-AMERICANOS-500x375.jpg"
             ),
             Receta(
                 id = "13",
@@ -121,7 +121,7 @@ object RecetaRepository {
                 ingredientes = listOf("Harina", "Mantequilla", "Azúcar", "Chispas de chocolate"),
                 materiales = listOf("Batidora", "Bandeja para hornear"),
                 instrucciones = "1. Mezclar los ingredientes. 2. Formar las galletas...",
-                imagenUrl = "https://www.example.com/galletas.jpg"
+                imagenUrl = "https://cdn0.recetasgratis.net/es/posts/6/4/1/galletas_con_chispas_de_chocolate_y_nueces_32146_600_square.jpg"
             ),
             Receta(
                 id = "14",
@@ -130,7 +130,7 @@ object RecetaRepository {
                 ingredientes = listOf("Pescado", "Limón", "Cebolla", "Cilantro"),
                 materiales = listOf("Tazón", "Cuchillo"),
                 instrucciones = "1. Marinar el pescado en limón. 2. Añadir los vegetales...",
-                imagenUrl = "https://www.example.com/ceviche.jpg"
+                imagenUrl = "https://d36fw6y2wq3bat.cloudfront.net/recipes/ceviche-de-pescado/900/ceviche-de-pescado_version_1670231839.jpg"
             ),
             Receta(
                 id = "15",
@@ -139,7 +139,7 @@ object RecetaRepository {
                 ingredientes = listOf("Arroz para sushi", "Pescado", "Alga nori", "Aguacate"),
                 materiales = listOf("Esterilla para sushi", "Cuchillo"),
                 instrucciones = "1. Preparar el arroz. 2. Enrollar con el pescado...",
-                imagenUrl = "https://www.example.com/sushi.jpg"
+                imagenUrl = "https://www.gourmet.cl/wp-content/uploads/2016/09/Crispy-Rolls-iStock-817071822-Nuevo-570x458.jpg"
             ),
             Receta(
                 id = "16",
@@ -148,7 +148,7 @@ object RecetaRepository {
                 ingredientes = listOf("Huevos", "Espinacas", "Queso", "Harina"),
                 materiales = listOf("Molde para quiche", "Horno"),
                 instrucciones = "1. Preparar la masa. 2. Añadir las espinacas y hornear...",
-                imagenUrl = "https://www.example.com/quiche.jpg"
+                imagenUrl = "https://comedera.com/wp-content/uploads/sites/9/2018/09/quiche-de-espinacas.jpg"
             ),
             Receta(
                 id = "17",
@@ -157,7 +157,7 @@ object RecetaRepository {
                 ingredientes = listOf("Arroz", "Camarones", "Mejillones", "Azafrán"),
                 materiales = listOf("Sartén grande", "Cuchillo"),
                 instrucciones = "1. Cocinar los mariscos. 2. Añadir el arroz y el azafrán...",
-                imagenUrl = "https://www.example.com/paella.jpg"
+                imagenUrl = "https://www.nestleprofessional-latam.com/sites/default/files/styles/np_recipe_detail/public/2022-07/paella.png?itok=CBvKkcsa"
             ),
             Receta(
                 id = "18",
@@ -166,7 +166,7 @@ object RecetaRepository {
                 ingredientes = listOf("Jamón", "Harina", "Leche", "Pan rallado"),
                 materiales = listOf("Sartén", "Cuchara"),
                 instrucciones = "1. Preparar la bechamel con jamón. 2. Freír las croquetas...",
-                imagenUrl = "https://www.example.com/croquetas.jpg"
+                imagenUrl = "https://i.blogs.es/70b1b8/croquetas_jamon/450_1000.jpg"
             ),
             Receta(
                 id = "19",
@@ -175,7 +175,7 @@ object RecetaRepository {
                 ingredientes = listOf("Salmón", "Aceite de oliva", "Limón", "Romero"),
                 materiales = listOf("Sartén", "Espátula"),
                 instrucciones = "1. Sazonar el salmón. 2. Cocinar a la plancha...",
-                imagenUrl = "https://www.example.com/salmon.jpg"
+                imagenUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZHqHq_T4qmbc_eU1XXWCDfSAsaZEkjf_L4w&s"
             ),
             Receta(
                 id = "20",
@@ -184,7 +184,7 @@ object RecetaRepository {
                 ingredientes = listOf("Huevos", "Leche", "Azúcar", "Vainilla"),
                 materiales = listOf("Molde para flan", "Horno"),
                 instrucciones = "1. Mezclar los ingredientes. 2. Hornear en baño María...",
-                imagenUrl = "https://www.example.com/flan.jpg"
+                imagenUrl = "https://images.aws.nestle.recipes/original/f07639d0bdf09dac4f27aa9562bf15a9_FLAN_DE_VAINILLA.jpg"
             ),
             Receta(
                 id = "21",
@@ -193,7 +193,7 @@ object RecetaRepository {
                 ingredientes = listOf("Harina", "Huevos", "Leche", "Nutella"),
                 materiales = listOf("Sartén", "Batidora"),
                 instrucciones = "1. Preparar la mezcla de crepes. 2. Cocinar y rellenar con Nutella...",
-                imagenUrl = "https://www.example.com/crepes.jpg"
+                imagenUrl = "https://www.recetasfusion.com/wp-content/uploads/2020/01/crepes-integrales-con-nutella-y-fresas-version-saludable-RecetasFusion.jpg"
             ),
             Receta(
                 id = "22",
@@ -202,7 +202,7 @@ object RecetaRepository {
                 ingredientes = listOf("Bizcochos de soletilla", "Café", "Mascarpone", "Cacao en polvo"),
                 materiales = listOf("Tazón", "Batidora"),
                 instrucciones = "1. Mojar los bizcochos en café. 2. Montar con mascarpone...",
-                imagenUrl = "https://www.example.com/tiramisu.jpg"
+                imagenUrl = "https://recetasdecocina.elmundo.es/wp-content/uploads/2022/08/tiramisu-postre-italiano.jpg"
             )
         )
     }
