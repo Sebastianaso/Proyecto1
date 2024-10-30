@@ -65,6 +65,7 @@ dependencies {
 
     // Dependencias adicionales para Material Design en Compose
     implementation("androidx.compose.material:material:1.5.1")
+    implementation(libs.androidx.appcompat)
 
     // Testing
     testImplementation(libs.junit)
