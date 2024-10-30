@@ -5,9 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Card
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
@@ -15,9 +14,31 @@ import com.example.recetarioexpress.model.Receta
 
 @Composable
 fun ListaDeRecetas(recetas: List<Receta>, onRecetaClick: (Receta) -> Unit) {
-    LazyColumn {
-        items(recetas) { receta ->
-            RecetaItem(receta, onRecetaClick)
+    var textoBusqueda by remember { mutableStateOf("") } // Variable para el campo de búsqueda
+
+    Column {
+        // Barra de búsqueda
+        TextField(
+            value = textoBusqueda,
+            onValueChange = { textoBusqueda = it },
+            label = { Text("Buscar receta") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        )
+
+        // Filtrar recetas según el texto ingresado en la búsqueda
+        val recetasFiltradas = if (textoBusqueda.isEmpty()) {
+            recetas
+        } else {
+            recetas.filter { it.nombre.startsWith(textoBusqueda, ignoreCase = true) }
+        }
+
+        // Mostrar la lista de recetas filtradas
+        LazyColumn {
+            items(recetasFiltradas) { receta ->
+                RecetaItem(receta, onRecetaClick)
+            }
         }
     }
 }

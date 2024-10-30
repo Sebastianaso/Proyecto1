@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.dp
 import com.example.recetarioexpress.data.UsuarioRepository
 
 @Composable
-fun PantallaLoginRegistro(usuarioRepository: UsuarioRepository, onLoginExitoso: () -> Unit) {
+fun PantallaLoginRegistro(usuarioRepository: UsuarioRepository, onLoginExitoso: (String) -> Unit) { // Cambié Any? a String
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var mensajeError by remember { mutableStateOf("") }
@@ -57,7 +57,7 @@ fun PantallaLoginRegistro(usuarioRepository: UsuarioRepository, onLoginExitoso: 
         } else {
             Button(onClick = {
                 if (usuarioRepository.iniciarSesion(username, password)) {
-                    onLoginExitoso()
+                    onLoginExitoso(username)  // Enviar el nombre de usuario cuando el login es exitoso
                 } else {
                     mensajeError = "Usuario o contraseña incorrectos."
                 }
