@@ -83,9 +83,11 @@ class MainActivity : ComponentActivity() {
                             usuarioRepository = usuarioRepository,
                             onLoginExitoso = { correo, username ->
                                 estaLogeado.value = true
-                                usuarioActual.value = username  // Guarda el nombre de usuario
+                                usuarioActual.value =
+                                    username.toString()  // Guarda el nombre de usuario
                             }
                         )
+
                     }
                 }
             }
