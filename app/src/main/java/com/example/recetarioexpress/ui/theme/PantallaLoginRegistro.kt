@@ -10,12 +10,9 @@ import androidx.compose.ui.unit.dp
 import com.example.recetarioexpress.data.UsuarioRepository
 
 @Composable
-fun PantallaLoginRegistro(usuarioRepository: UsuarioRepository, onLoginExitoso: (String, String) -> Unit)
- {
-    var correo by remember { mutableStateOf("") }
+fun PantallaLoginRegistro(usuarioRepository: UsuarioRepository, onLoginExitoso: (String) -> Unit) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
     var mensajeError by remember { mutableStateOf("") }
     var esRegistro by remember { mutableStateOf(false) }  // Cambiar entre registro e inicio de sesión
 
@@ -27,51 +24,36 @@ fun PantallaLoginRegistro(usuarioRepository: UsuarioRepository, onLoginExitoso: 
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp), // Espacio entre elementos
             modifier = Modifier.fillMaxWidth()
         ) {
+            TextField(
+                value = username,
+                onValueChange = { username = it },
+                label = { Text("Nombre de usuario") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            TextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Contraseña") },
+                visualTransformation = PasswordVisualTransformation(), // Oculta la contraseña
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            if (mensajeError.isNotEmpty()) {
+                Text(text = mensajeError, color = androidx.compose.ui.graphics.Color.Red)
+            }
+
             if (esRegistro) {
-                TextField(
-                    value = correo,
-                    onValueChange = { correo = it },
-                    label = { Text("Correo electrónico") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                TextField(
-                    value = username,
-                    onValueChange = { username = it },
-                    label = { Text("Nombre de usuario") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                TextField(
-                    value = password,
-                    onValueChange = { password = it },
-                    label = { Text("Contraseña") },
-                    visualTransformation = PasswordVisualTransformation(),
-                    modifier = Modifier.fillMaxWidth()
-                )
-                TextField(
-                    value = confirmPassword,
-                    onValueChange = { confirmPassword = it },
-                    label = { Text("Confirmar contraseña") },
-                    visualTransformation = PasswordVisualTransformation(),
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                if (mensajeError.isNotEmpty()) {
-                    Text(text = mensajeError, color = androidx.compose.ui.graphics.Color.Red)
-                }
-
                 Button(onClick = {
-                    if (password != confirmPassword) {
-                        mensajeError = "Las contraseñas no coinciden."
-                    } else if (usuarioRepository.obtenerUsuarioPorCorreo(correo)) {
-                        mensajeError = "El correo ya está registrado. Intente iniciar sesión."
+                    if (usuarioRepository.obtenerUsuario(username)) {
+                        mensajeError = "El usuario ya existe. Intente iniciar sesión."
                     } else {
-                        val registroExitoso = usuarioRepository.registrarUsuario(correo, username, password, confirmPassword)
+                        val registroExitoso = usuarioRepository.registrarUsuario(username, password)
                         if (registroExitoso) {
                             mensajeError = "Registro exitoso. Ahora puede iniciar sesión."
-                            esRegistro = false
+                            esRegistro = false  // Cambiar a pantalla de login
                         } else {
                             mensajeError = "Error al registrar el usuario."
                         }
@@ -80,42 +62,21 @@ fun PantallaLoginRegistro(usuarioRepository: UsuarioRepository, onLoginExitoso: 
                     Text("Registrar")
                 }
             } else {
-                TextField(
-                    value = correo,
-                    onValueChange = { correo = it },
-                    label = { Text("Correo electrónico") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                TextField(
-                    value = password,
-                    onValueChange = { password = it },
-                    label = { Text("Contraseña") },
-                    visualTransformation = PasswordVisualTransformation(),
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                if (mensajeError.isNotEmpty()) {
-                    Text(text = mensajeError, color = androidx.compose.ui.graphics.Color.Red)
-                }
-
                 Button(onClick = {
-                    val usuario = usuarioRepository.iniciarSesion(correo, password)
-                    if (usuario != null) {
-                        onLoginExitoso(correo, usuario) // Pasar correo y nombre de usuario al iniciar sesión
+                    if (usuarioRepository.iniciarSesion(username, password)) {
+                        onLoginExitoso(username)  // Enviar el nombre de usuario cuando el login es exitoso
                     } else {
-                        mensajeError = "Correo o contraseña incorrectos."
+                        mensajeError = "Usuario o contraseña incorrectos."
                     }
                 }) {
                     Text("Iniciar Sesión")
                 }
-
-
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
             Button(onClick = { esRegistro = !esRegistro }) {
                 Text(if (esRegistro) "Ya tienes cuenta? Inicia sesión" else "No tienes cuenta? Regístrate")
             }
         }
     }
 }
+
