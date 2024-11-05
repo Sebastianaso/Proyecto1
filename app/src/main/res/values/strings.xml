@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">RecetarioExpress</string>
+    <string name="default_web_client_id">585960514449-v60n6rigdu2496cjg6dagcoqgis67smi.apps.googleusercontent.com</string>
+
 </resources>

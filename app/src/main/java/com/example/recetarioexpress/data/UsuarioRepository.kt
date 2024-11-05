@@ -4,45 +4,61 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import android.util.Log
 
 class UsuarioRepository(private val context: Context) {
 
     private val dbHelper = DatabaseHelper(context)
 
-    // Método para registrar un nuevo usuario
-    fun registrarUsuario(username: String, password: String): Boolean {
-        // Verificar si el usuario ya existe antes de registrarlo
-        if (obtenerUsuario(username)) {
-            return false // El usuario ya existe
+    // Método para registrar un nuevo usuario con correo, nombre de usuario, contraseña y confirmación
+    fun registrarUsuario(correo: String, username: String, password: String, confirmarPassword: String): Boolean {
+        // Verificar si el usuario ya existe por el correo
+        if (obtenerUsuarioPorCorreo(correo)) {
+            return false // El correo ya está registrado
+        }
+
+        // Verificar si las contraseñas coinciden
+        if (password != confirmarPassword) {
+            return false // Las contraseñas no coinciden
         }
 
         val db = dbHelper.writableDatabase
         val values = ContentValues().apply {
-            put("username", username)
-            put("password", password)
+            put(DatabaseHelper.COLUMN_CORREO, correo)
+            put(DatabaseHelper.COLUMN_USERNAME, username)
+            put(DatabaseHelper.COLUMN_PASSWORD, password)
         }
-        val newRowId = db.insert("usuarios", null, values)
+        val newRowId = db.insert(DatabaseHelper.TABLE_USUARIOS, null, values)
         return newRowId != -1L // Devuelve true si el registro fue exitoso
     }
 
-    // Método para iniciar sesión
-    fun iniciarSesion(username: String, password: String): Boolean {
+    // Método para iniciar sesión con el correo y contraseña
+    fun iniciarSesion(correo: String, password: String): String? {
         val db = dbHelper.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM usuarios WHERE username = ? AND password = ?", arrayOf(username, password))
-        val usuarioExiste = cursor.count > 0
+        val cursor: Cursor = db.rawQuery(
+            "SELECT ${DatabaseHelper.COLUMN_USERNAME} FROM ${DatabaseHelper.TABLE_USUARIOS} WHERE ${DatabaseHelper.COLUMN_CORREO} = ? AND ${DatabaseHelper.COLUMN_PASSWORD} = ?",
+            arrayOf(correo, password)
+        )
+
+        val username: String? = if (cursor.moveToFirst()) {
+            cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_USERNAME))
+        } else {
+            null // Usuario no encontrado
+        }
+
         cursor.close()  // Asegúrate de cerrar el cursor
-        return usuarioExiste
+        return username // Devuelve el nombre de usuario si el login fue exitoso
     }
 
-    // Verificar si un usuario ya existe
-    fun obtenerUsuario(username: String): Boolean {
+    // Verificar si un correo ya está registrado
+    fun obtenerUsuarioPorCorreo(correo: String): Boolean {
         val db = dbHelper.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM usuarios WHERE username = ?", arrayOf(username))
+        val cursor: Cursor = db.rawQuery(
+            "SELECT * FROM ${DatabaseHelper.TABLE_USUARIOS} WHERE ${DatabaseHelper.COLUMN_CORREO} = ?",
+            arrayOf(correo)
+        )
+
         val existe = cursor.count > 0
         cursor.close() // Asegúrate de cerrar el cursor
         return existe
     }
 }
-
-

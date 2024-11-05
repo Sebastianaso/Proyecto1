@@ -81,10 +81,9 @@ class MainActivity : ComponentActivity() {
                         // Mostrar pantalla de login/registro
                         PantallaLoginRegistro(
                             usuarioRepository = usuarioRepository,
-                            onLoginExitoso = { username ->
+                            onLoginExitoso = { correo, username ->
                                 estaLogeado.value = true
-                                usuarioActual.value =
-                                    username.toString() // Guarda el nombre del usuario que inició sesión
+                                usuarioActual.value = username  // Guarda el nombre de usuario
                             }
                         )
                     }

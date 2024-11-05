@@ -16,6 +16,13 @@
         android:theme="@style/Theme.RecetarioExpress"
         tools:targetApi="31">
 
+        <!-- Declaración de LoginActivity -->
+        <activity
+            android:name=".LoginActivity"
+            android:exported="true"
+            android:label="Login"
+            android:theme="@style/Theme.RecetarioExpress"/>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

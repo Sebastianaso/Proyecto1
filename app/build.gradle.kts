@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("com.google.gms.google-services") // Aplica el plugin de Google Services
 }
 
 android {
@@ -66,6 +67,16 @@ dependencies {
     // Dependencias adicionales para Material Design en Compose
     implementation("androidx.compose.material:material:1.5.1")
     implementation(libs.androidx.appcompat)
+
+    // Firebase BOM para gestionar las versiones de forma coherente
+    implementation(platform("com.google.firebase:firebase-bom:32.0.0")) // Cambia a la última versión disponible
+
+    // Dependencias de Firebase
+    implementation("com.google.firebase:firebase-auth-ktx") // Firebase Authentication
+    implementation("com.google.firebase:firebase-database-ktx") // Firebase Database
+
+    // Servicios de autenticación de Google
+    implementation("com.google.android.gms:play-services-auth:20.6.0") // Usa la versión más reciente disponible
 
     // Testing
     testImplementation(libs.junit)
