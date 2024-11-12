@@ -28,13 +28,13 @@ class MainActivity : ComponentActivity() {
         usuarioRepository = UsuarioRepository(this)
 
         setContent {
-            val contexto = LocalContext.current
             val estaLogeado = remember { mutableStateOf(false) }
             val usuarioActual = remember { mutableStateOf("") } // Almacena el nombre del usuario logeado
 
             MaterialTheme {
                 Surface {
                     if (estaLogeado.value) {
+                        // Pantalla principal con recetas y menú
                         Scaffold(
                             topBar = {
                                 TopAppBar(
@@ -45,7 +45,7 @@ class MainActivity : ComponentActivity() {
                                         // Icono de perfil circular en la esquina superior derecha
                                         IconButton(onClick = { expanded = true }) {
                                             Image(
-                                                painter = painterResource(id = R.drawable.usuario), // Cambia por tu recurso de imagen
+                                                painter = painterResource(id = R.drawable.usuario),
                                                 contentDescription = "Perfil",
                                                 modifier = Modifier
                                                     .size(40.dp)
@@ -75,19 +75,18 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                         ) {
-                            NavegacionRecetas()  // Mostrar recetas una vez iniciado sesión
+                            // Muestra la navegación de recetas
+                            NavegacionRecetas()
                         }
                     } else {
-                        // Mostrar pantalla de login/registro
+                        // Pantalla de login/registro
                         PantallaLoginRegistro(
                             usuarioRepository = usuarioRepository,
                             onLoginExitoso = { correo, username ->
                                 estaLogeado.value = true
-                                usuarioActual.value =
-                                    username.toString()  // Guarda el nombre de usuario
+                                usuarioActual.value = username // Guarda el nombre de usuario después de login exitoso
                             }
                         )
-
                     }
                 }
             }

@@ -12,7 +12,7 @@ import com.example.recetarioexpress.model.Receta
 @Composable
 fun BuscarRecetas(recetas: List<Receta>, onRecetaClick: (Receta) -> Unit) {
     var query by remember { mutableStateOf("") }
-    val recetasFiltradas = recetas.filter { it.nombre.contains(query, ignoreCase = true) }
+    val recetasFiltradas = recetas.filter { it.nombre?.startsWith(query, ignoreCase = true) ?: false }
 
     Column {
         TextField(

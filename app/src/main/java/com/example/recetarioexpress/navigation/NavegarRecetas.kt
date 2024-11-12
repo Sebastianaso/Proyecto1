@@ -1,6 +1,7 @@
 package com.example.recetarioexpress.navigation
 
-import androidx.compose.runtime.Composable
+import androidx.compose.material.Text
+import androidx.compose.runtime.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -12,16 +13,59 @@ import com.example.recetarioexpress.data.RecetaRepository
 @Composable
 fun NavegacionRecetas() {
     val navController = rememberNavController()
+    val repository = RecetaRepository()
+    var recetasFiltradas by remember { mutableStateOf<List<Receta>?>(null) }
+    var cargando by remember { mutableStateOf(true) }
+
+    LaunchedEffect(Unit) {
+        cargando = true
+        repository.buscarRecetas(20, callback = { resultado ->
+            recetasFiltradas = resultado
+            cargando = false
+        }, errorCallback = {
+            cargando = false
+            // Manejar error
+        })
+    }
+
     NavHost(navController, startDestination = "lista_recetas") {
         composable(route = "lista_recetas") {
-            ListaDeRecetas(recetas = RecetaRepository.obtenerRecetas()) { receta ->
-                navController.navigate("detalle_receta/${receta.id}")
+            if (cargando) {
+                Text("Cargando recetas...")
+            } else {
+                recetasFiltradas?.let {
+                    ListaDeRecetas(it) { receta ->
+                        navController.navigate("detalle_receta/${receta.id}")
+                    }
+                } ?: Text("No se encontraron recetas.")
             }
         }
         composable(route = "detalle_receta/{id}") { backStackEntry ->
-            val recetaId = backStackEntry.arguments?.getString("id")
-            val receta = RecetaRepository.obtenerRecetaPorId(recetaId!!)
-            DetalleDeReceta(receta!!)
+            val recetaId = backStackEntry.arguments?.getString("id")?.toIntOrNull()
+            var receta by remember { mutableStateOf<Receta?>(null) }
+            var cargandoReceta by remember { mutableStateOf(true) }
+
+            if (recetaId != null) {
+                LaunchedEffect(recetaId) {
+                    cargandoReceta = true
+                    repository.obtenerDetallesReceta(recetaId, callback = {
+                        receta = it
+                        cargandoReceta = false
+                    }, errorCallback = {
+                        cargandoReceta = false
+                        // Manejar el error si es necesario
+                    })
+                }
+
+                if (cargandoReceta) {
+                    Text("Cargando detalles de la receta...")
+                } else {
+                    DetalleDeReceta(receta)
+                }
+            } else {
+                Text("ID de receta no válido.")
+            }
         }
     }
 }
+
