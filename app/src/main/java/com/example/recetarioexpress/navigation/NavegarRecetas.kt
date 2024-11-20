@@ -17,7 +17,7 @@ import com.example.recetarioexpress.data.RecetaRepository
 
 @Composable
 fun NavegacionRecetas() {
-    val navController = rememberNavController() // Controlador único para toda la navegación
+    val navController = rememberNavController()
     val repository = RecetaRepository()
     var recetasFiltradas by remember { mutableStateOf<List<Receta>?>(null) }
     var cargando by remember { mutableStateOf(true) }
@@ -34,17 +34,36 @@ fun NavegacionRecetas() {
     }
 
     NavHost(navController, startDestination = "lista_recetas") {
+        // Pantalla principal: Lista de recetas con búsqueda
         composable(route = "lista_recetas") {
             if (cargando) {
                 Text("Cargando recetas...")
             } else {
-                recetasFiltradas?.let {
-                    ListaDeRecetas(it) { receta ->
-                        navController.navigate("detalle_receta/${receta.id}") // Navegación al detalle
-                    }
+                recetasFiltradas?.let { recetas ->
+                    ListaDeRecetas(
+                        recetas = recetas,
+                        onRecetaClick = { receta ->
+                            navController.navigate("detalle_receta/${receta.id}")
+                        },
+                        onBuscarRecetas = { consulta ->
+                            repository.buscarRecetas(
+                                numeroDeRecetas = 20,
+                                callback = { nuevasRecetas ->
+                                    recetasFiltradas = nuevasRecetas?.filter {
+                                        it.nombre?.contains(consulta, ignoreCase = true) ?: false
+                                    }
+                                },
+                                errorCallback = {
+                                    // Manejo de error
+                                }
+                            )
+                        }
+                    )
                 } ?: Text("No se encontraron recetas.")
             }
         }
+
+        // Pantalla de detalle de receta
         composable(route = "detalle_receta/{id}") { backStackEntry ->
             val recetaId = backStackEntry.arguments?.getString("id")?.toIntOrNull()
             var receta by remember { mutableStateOf<Receta?>(null) }
@@ -53,12 +72,17 @@ fun NavegacionRecetas() {
             if (recetaId != null) {
                 LaunchedEffect(recetaId) {
                     cargandoReceta = true
-                    repository.obtenerDetallesReceta(recetaId, callback = {
-                        receta = it
-                        cargandoReceta = false
-                    }, errorCallback = {
-                        cargandoReceta = false
-                    })
+                    repository.obtenerDetallesReceta(
+                        recetaId,
+                        callback = {
+                            receta = it
+                            cargandoReceta = false
+                        },
+                        errorCallback = {
+                            cargandoReceta = false
+                            // Manejar el error si es necesario
+                        }
+                    )
                 }
 
                 if (cargandoReceta) {
@@ -79,21 +103,13 @@ fun NavegacionRecetas() {
                                 contentDescription = "Regresar"
                             )
                         }
-                        DetalleDeReceta(receta)
+                        receta?.let { DetalleDeReceta(it) }
                     }
                 }
             } else {
-                Column {
-                    Button(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack, // Ícono de flecha
-                            contentDescription = "Regresar"
-                        )
-                    }
-                    Text("ID de receta no válido.")
-                }
+                Text("ID de receta no válido.")
             }
         }
+
     }
 }
-

@@ -16,11 +16,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 
 @Composable
+
 fun DetalleDeReceta(receta: Receta?) {
     val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
 
     receta?.let {
         Column(modifier = Modifier.padding(16.dp)) {
+            // Imagen de la receta con botón de regreso
             Box {
                 Image(
                     painter = rememberImagePainter(data = it.imagenUrl ?: ""),
@@ -39,25 +41,55 @@ fun DetalleDeReceta(receta: Receta?) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = "Regresar",
-                        tint = Color.Black
+                        tint = Color.White
                     )
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-            Text(text = it.nombre ?: "Sin nombre", style = MaterialTheme.typography.h5)
 
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "Ingredientes:", style = MaterialTheme.typography.subtitle1)
+            // Título de la receta
+            Text(
+                text = it.nombre ?: "Sin nombre",
+                style = MaterialTheme.typography.h5,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+
+            // Descripción de la receta
+            Text(
+                text = it.descripcion ?: "Sin descripción disponible.",
+                style = MaterialTheme.typography.body1,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
+            // Ingredientes
+            Text(
+                text = "Ingredientes:",
+                style = MaterialTheme.typography.subtitle1,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
             it.ingredientes.forEach { ingrediente ->
-                Text("- ${ingrediente.nombre}: ${ingrediente.cantidad} ${ingrediente.unidad}")
+                Text(
+                    text = "- ${ingrediente.nombre}: ${ingrediente.cantidad} ${ingrediente.unidad}",
+                    style = MaterialTheme.typography.body2
+                )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "Instrucciones:", style = MaterialTheme.typography.subtitle1)
-            Text(text = it.instrucciones ?: "Sin instrucciones")
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Instrucciones
+            Text(
+                text = "Instrucciones:",
+                style = MaterialTheme.typography.subtitle1,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            Text(
+                text = it.instrucciones ?: "No se han proporcionado instrucciones.",
+                style = MaterialTheme.typography.body2
+            )
         }
     } ?: Text("Receta no encontrada.")
 }
+
 
 
