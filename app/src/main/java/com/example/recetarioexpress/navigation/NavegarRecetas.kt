@@ -1,6 +1,11 @@
 package com.example.recetarioexpress.navigation
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material.Button
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -29,17 +34,36 @@ fun NavegacionRecetas() {
     }
 
     NavHost(navController, startDestination = "lista_recetas") {
+        // Pantalla principal: Lista de recetas con búsqueda
         composable(route = "lista_recetas") {
             if (cargando) {
                 Text("Cargando recetas...")
             } else {
-                recetasFiltradas?.let {
-                    ListaDeRecetas(it) { receta ->
-                        navController.navigate("detalle_receta/${receta.id}")
-                    }
+                recetasFiltradas?.let { recetas ->
+                    ListaDeRecetas(
+                        recetas = recetas,
+                        onRecetaClick = { receta ->
+                            navController.navigate("detalle_receta/${receta.id}")
+                        },
+                        onBuscarRecetas = { consulta ->
+                            repository.buscarRecetas(
+                                numeroDeRecetas = 20,
+                                callback = { nuevasRecetas ->
+                                    recetasFiltradas = nuevasRecetas?.filter {
+                                        it.nombre?.contains(consulta, ignoreCase = true) ?: false
+                                    }
+                                },
+                                errorCallback = {
+                                    // Manejo de error
+                                }
+                            )
+                        }
+                    )
                 } ?: Text("No se encontraron recetas.")
             }
         }
+
+        // Pantalla de detalle de receta
         composable(route = "detalle_receta/{id}") { backStackEntry ->
             val recetaId = backStackEntry.arguments?.getString("id")?.toIntOrNull()
             var receta by remember { mutableStateOf<Receta?>(null) }
@@ -48,24 +72,44 @@ fun NavegacionRecetas() {
             if (recetaId != null) {
                 LaunchedEffect(recetaId) {
                     cargandoReceta = true
-                    repository.obtenerDetallesReceta(recetaId, callback = {
-                        receta = it
-                        cargandoReceta = false
-                    }, errorCallback = {
-                        cargandoReceta = false
-                        // Manejar el error si es necesario
-                    })
+                    repository.obtenerDetallesReceta(
+                        recetaId,
+                        callback = {
+                            receta = it
+                            cargandoReceta = false
+                        },
+                        errorCallback = {
+                            cargandoReceta = false
+                            // Manejar el error si es necesario
+                        }
+                    )
                 }
 
                 if (cargandoReceta) {
-                    Text("Cargando detalles de la receta...")
+                    Column {
+                        Button(onClick = { navController.popBackStack() }) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowBack, // Ícono de flecha
+                                contentDescription = "Regresar"
+                            )
+                        }
+                        Text("Cargando detalles de la receta...")
+                    }
                 } else {
-                    DetalleDeReceta(receta)
+                    Column {
+                        Button(onClick = { navController.popBackStack() }) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowBack, // Ícono de flecha
+                                contentDescription = "Regresar"
+                            )
+                        }
+                        receta?.let { DetalleDeReceta(it) }
+                    }
                 }
             } else {
                 Text("ID de receta no válido.")
             }
         }
+
     }
 }
-
