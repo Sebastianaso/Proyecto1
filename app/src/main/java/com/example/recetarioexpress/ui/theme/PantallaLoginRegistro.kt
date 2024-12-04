@@ -14,9 +14,16 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.recetarioexpress.R
 import com.example.recetarioexpress.data.UsuarioRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
-fun PantallaLoginRegistro(usuarioRepository: UsuarioRepository, onLoginExitoso: (String, String) -> Unit) {
+fun PantallaLoginRegistro(
+    usuarioRepository: UsuarioRepository,
+    onLoginExitoso: (String, String) -> Unit,
+    onGoogleSignIn: () -> Unit,
+) {
     var correo by remember { mutableStateOf("") }
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -86,17 +93,20 @@ fun PantallaLoginRegistro(usuarioRepository: UsuarioRepository, onLoginExitoso: 
 
                 Button(
                     onClick = {
-                        if (password != confirmPassword) {
-                            mensajeError = "Las contraseñas no coinciden."
-                        } else if (usuarioRepository.obtenerUsuarioPorCorreo(correo)) {
-                            mensajeError = "El correo ya está registrado. Intente iniciar sesión."
-                        } else {
-                            val registroExitoso = usuarioRepository.registrarUsuario(correo, username, password, confirmPassword)
-                            if (registroExitoso) {
-                                mensajeError = "Registro exitoso. Ahora puede iniciar sesión."
-                                esRegistro = false
+                        // Inicia una coroutine para manejar la llamada suspend
+                        CoroutineScope(Dispatchers.Main).launch {
+                            if (password != confirmPassword) {
+                                mensajeError = "Las contraseñas no coinciden."
+                            } else if (usuarioRepository.obtenerUsuarioPorCorreo(correo)) {
+                                mensajeError = "El correo ya está registrado. Intente iniciar sesión."
                             } else {
-                                mensajeError = "Error al registrar el usuario."
+                                val registroExitoso = usuarioRepository.registrarUsuario(correo, username, password)
+                                if (registroExitoso) {
+                                    mensajeError = "Registro exitoso. Ahora puede iniciar sesión."
+                                    esRegistro = false
+                                } else {
+                                    mensajeError = "Error al registrar el usuario."
+                                }
                             }
                         }
                     },
@@ -129,11 +139,13 @@ fun PantallaLoginRegistro(usuarioRepository: UsuarioRepository, onLoginExitoso: 
 
                 Button(
                     onClick = {
-                        val usuario = usuarioRepository.iniciarSesion(correo, password)
-                        if (usuario != null) {
-                            onLoginExitoso(correo, usuario) // Pasar correo y nombre de usuario al iniciar sesión
-                        } else {
-                            mensajeError = "Correo o contraseña incorrectos."
+                        CoroutineScope(Dispatchers.Main).launch {
+                            val usuario = usuarioRepository.iniciarSesion(correo, password)
+                            if (usuario != null) {
+                                onLoginExitoso(correo, usuario.displayName ?: "Usuario")  // Pasa la información del usuario
+                            } else {
+                                mensajeError = "Correo o contraseña incorrectos."
+                            }
                         }
                     },
                     modifier = Modifier.fillMaxWidth()
@@ -143,9 +155,33 @@ fun PantallaLoginRegistro(usuarioRepository: UsuarioRepository, onLoginExitoso: 
             }
 
             Spacer(modifier = Modifier.height(8.dp))
+
+            // Botón de Google Sign-In
+            Button(
+                onClick = onGoogleSignIn,
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    // Icono de Google
+                    Image(
+                        painter = painterResource(id = R.drawable.google_icon), // Asegúrate de tener este icono en tus recursos
+                        contentDescription = "Google Logo",
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Iniciar sesión con Google", color = Color.Black)
+                }
+            }
+
             TextButton(onClick = { esRegistro = !esRegistro }) {
                 Text(if (esRegistro) "¿Ya tienes cuenta? Inicia sesión" else "¿No tienes cuenta? Regístrate")
             }
         }
     }
 }
+

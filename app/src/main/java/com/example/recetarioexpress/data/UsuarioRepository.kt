@@ -1,64 +1,54 @@
 package com.example.recetarioexpress.data
 
-import android.content.ContentValues
-import android.content.Context
-import android.database.Cursor
-import android.database.sqlite.SQLiteDatabase
+import com.example.recetarioexpress.MainActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.tasks.await
 
-class UsuarioRepository(private val context: Context) {
+class UsuarioRepository(mainActivity: MainActivity) {
 
-    private val dbHelper = DatabaseHelper(context)
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 
-    // Método para registrar un nuevo usuario con correo, nombre de usuario, contraseña y confirmación
-    fun registrarUsuario(correo: String, username: String, password: String, confirmarPassword: String): Boolean {
-        // Verificar si el usuario ya existe por el correo
-        if (obtenerUsuarioPorCorreo(correo)) {
-            return false // El correo ya está registrado
+    // Método para registrar un nuevo usuario
+    suspend fun registrarUsuario(correo: String, username: String, password: String): Boolean {
+
+
+        return try {
+            val result = auth.createUserWithEmailAndPassword(correo, password).await()
+
+            // Guardar el nombre de usuario en Firestore
+            val user = hashMapOf(
+                "correo" to correo,
+                "username" to username
+            )
+            firestore.collection("usuarios").document(result.user!!.uid).set(user).await()
+            true // Registro exitoso
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false // Error durante el registro
         }
-
-        // Verificar si las contraseñas coinciden
-        if (password != confirmarPassword) {
-            return false // Las contraseñas no coinciden
-        }
-
-        val db = dbHelper.writableDatabase
-        val values = ContentValues().apply {
-            put(DatabaseHelper.COLUMN_CORREO, correo)
-            put(DatabaseHelper.COLUMN_USERNAME, username)
-            put(DatabaseHelper.COLUMN_PASSWORD, password)
-        }
-        val newRowId = db.insert(DatabaseHelper.TABLE_USUARIOS, null, values)
-        return newRowId != -1L // Devuelve true si el registro fue exitoso
     }
 
-    // Método para iniciar sesión con el correo y contraseña
-    fun iniciarSesion(correo: String, password: String): String? {
-        val db = dbHelper.readableDatabase
-        val cursor: Cursor = db.rawQuery(
-            "SELECT ${DatabaseHelper.COLUMN_USERNAME} FROM ${DatabaseHelper.TABLE_USUARIOS} WHERE ${DatabaseHelper.COLUMN_CORREO} = ? AND ${DatabaseHelper.COLUMN_PASSWORD} = ?",
-            arrayOf(correo, password)
-        )
-
-        val username: String? = if (cursor.moveToFirst()) {
-            cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_USERNAME))
-        } else {
-            null // Usuario no encontrado
+    // Método para iniciar sesión
+    suspend fun iniciarSesion(correo: String, password: String): FirebaseUser? {
+        return try {
+            val result = auth.signInWithEmailAndPassword(correo, password).await()
+            result.user  // Devuelve el usuario si el inicio de sesión fue exitoso
+        } catch (e: FirebaseAuthException) {
+            null  // Devuelve null si hay un error en el inicio de sesión
         }
-
-        cursor.close()  // Asegúrate de cerrar el cursor
-        return username // Devuelve el nombre de usuario si el login fue exitoso
     }
 
     // Verificar si un correo ya está registrado
-    fun obtenerUsuarioPorCorreo(correo: String): Boolean {
-        val db = dbHelper.readableDatabase
-        val cursor: Cursor = db.rawQuery(
-            "SELECT * FROM ${DatabaseHelper.TABLE_USUARIOS} WHERE ${DatabaseHelper.COLUMN_CORREO} = ?",
-            arrayOf(correo)
-        )
-
-        val existe = cursor.count > 0
-        cursor.close() // Asegúrate de cerrar el cursor
-        return existe
+    suspend fun obtenerUsuarioPorCorreo(correo: String): Boolean {
+        return try {
+            val methods = auth.fetchSignInMethodsForEmail(correo).await()
+            methods.signInMethods?.isNotEmpty() == true  // Devuelve true si el correo ya está registrado
+        } catch (e: FirebaseAuthException) {
+            false  // Devuelve false si hay un error
+        }
     }
 }

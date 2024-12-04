@@ -1,26 +1,45 @@
 {
   "project_info": {
-    "project_number": "585960514449",
-    "project_id": "recetarioexpress-b18d6",
-    "storage_bucket": "recetarioexpress-b18d6.appspot.com"
+    "project_number": "314937224599",
+    "firebase_url": "https://recetarioexpress-4ff26-default-rtdb.firebaseio.com",
+    "project_id": "recetarioexpress-4ff26",
+    "storage_bucket": "recetarioexpress-4ff26.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:585960514449:android:f21fac73ae82f744d7f030",
+        "mobilesdk_app_id": "1:314937224599:android:795e3153482bd6bc1f28d2",
         "android_client_info": {
           "package_name": "com.example.recetarioexpress"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "314937224599-03e817gqprqlsihrj8mgnfdodeaotfo6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.recetarioexpress",
+            "certificate_hash": "09f4e3fe77ca6113b382a64ef4b154d00efef1f8"
+          }
+        },
+        {
+          "client_id": "314937224599-lt11vr005kbg212qeq7cq5qmi0lk7ov3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyB87xuw2e4R_7mOibl4y6Y5njfYMqk4WW4"
+          "current_key": "AIzaSyCsC5YGnU7lxFm0KmBb6WDfLoxiWo8KjfU"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "314937224599-lt11vr005kbg212qeq7cq5qmi0lk7ov3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

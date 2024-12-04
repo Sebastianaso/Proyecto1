@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.example.recetarioexpress"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.recetarioexpress"
@@ -65,18 +65,19 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.1.0")
 
     // Dependencias adicionales para Material Design en Compose
-    implementation("androidx.compose.material:material:1.5.1")
+    implementation("androidx.compose.material:material:1.7.5")
     implementation(libs.androidx.appcompat)
 
     // Firebase BOM para gestionar las versiones de forma coherente
-    implementation(platform("com.google.firebase:firebase-bom:32.0.0")) // Cambia a la última versión disponible
+    implementation(platform("com.google.firebase:firebase-bom:33.6.0")) // Cambia a la última versión disponible
 
     // Dependencias de Firebase
-    implementation("com.google.firebase:firebase-auth-ktx") // Firebase Authentication
-    implementation("com.google.firebase:firebase-database-ktx") // Firebase Database
+    implementation("com.google.firebase:firebase-auth-ktx:23.1.0") // Firebase Authentication
+    implementation("com.google.firebase:firebase-database-ktx") // Firebase Realtime Database
+    implementation("com.google.firebase:firebase-firestore-ktx") // Firebase Firestore
 
     // Servicios de autenticación de Google
-    implementation("com.google.android.gms:play-services-auth:20.6.0") // Usa la versión más reciente disponible
+    implementation("com.google.android.gms:play-services-auth:21.2.0") // Usa la versión más reciente disponible
 
     // Retrofit y convertidor Gson
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
