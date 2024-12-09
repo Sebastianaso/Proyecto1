@@ -1,54 +1,90 @@
 package com.example.recetarioexpress.data
 
-import com.example.recetarioexpress.MainActivity
+import com.example.recetarioexpress.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.tasks.await
+import android.util.Log
+import com.google.firebase.auth.userProfileChangeRequest
 
-class UsuarioRepository(mainActivity: MainActivity) {
+class UsuarioRepository {
 
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
-    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
+    private val database = FirebaseDatabase.getInstance()
+    private val usersRef = database.getReference("usuarios")
 
     // Método para registrar un nuevo usuario
-    suspend fun registrarUsuario(correo: String, username: String, password: String): Boolean {
-
-
+    suspend fun registrarUsuario(user: User): Boolean {
         return try {
-            val result = auth.createUserWithEmailAndPassword(correo, password).await()
+            // Crear usuario en Firebase Authentication
+            val result = auth.createUserWithEmailAndPassword(user.email, user.password).await()
 
-            // Guardar el nombre de usuario en Firestore
-            val user = hashMapOf(
-                "correo" to correo,
-                "username" to username
+            // Obtener el usuario creado
+            val firebaseUser = result.user ?: throw FirebaseAuthException(
+                "USER_CREATION_FAILED", "El usuario no se pudo crear"
             )
-            firestore.collection("usuarios").document(result.user!!.uid).set(user).await()
-            true // Registro exitoso
+
+            // Actualiza displayName en Firebase Authentication
+            val profileUpdates = userProfileChangeRequest {
+                displayName = user.username
+            }
+            firebaseUser.updateProfile(profileUpdates).await()
+
+            // Guardar el usuario en Realtime Database
+            val userMap = mapOf(
+                "id" to user.id, // Asegurarte de que sea String
+                "username" to user.username,
+                "email" to user.email,
+                "password" to user.password // Si también necesitas almacenar la contraseña
+            )
+            usersRef.child(firebaseUser.uid).setValue(userMap).await()
+
+            Log.d("UsuarioRepository", "Usuario registrado con éxito: ${user.username}")
+            true
         } catch (e: Exception) {
-            e.printStackTrace()
-            false // Error durante el registro
+            Log.e("UsuarioRepository", "Error al registrar el usuario: ${e.message}")
+            false
         }
     }
 
-    // Método para iniciar sesión
-    suspend fun iniciarSesion(correo: String, password: String): FirebaseUser? {
+    // Método para iniciar sesión con correo y contraseña
+    suspend fun iniciarSesion(email: String, password: String): User? {
         return try {
-            val result = auth.signInWithEmailAndPassword(correo, password).await()
-            result.user  // Devuelve el usuario si el inicio de sesión fue exitoso
-        } catch (e: FirebaseAuthException) {
-            null  // Devuelve null si hay un error en el inicio de sesión
+            val result = auth.signInWithEmailAndPassword(email, password).await()
+            val firebaseUser = result.user ?: return null
+
+            // Recuperar datos del usuario desde Realtime Database
+            val userSnapshot = usersRef.child(firebaseUser.uid).get().await()
+            val userMap = userSnapshot.value as? Map<String, Any> // Convertir manualmente si es necesario
+
+            val user = userMap?.let {
+                User(
+                    id = it["id"]?.toString() ?: "", // Asegurarte de que sea String
+                    username = it["username"]?.toString() ?: "",
+                    email = it["email"]?.toString() ?: "",
+                    password = it["password"]?.toString() ?: "" // Si también almacenas la contraseña
+                )
+            }
+
+            Log.d("UsuarioRepository", "Inicio de sesión exitoso para el correo: $email")
+            user
+        } catch (e: Exception) {
+            Log.e("UsuarioRepository", "Error al iniciar sesión: ${e.message}")
+            null
         }
     }
 
-    // Verificar si un correo ya está registrado
+    // Método para verificar si un correo ya está registrado
     suspend fun obtenerUsuarioPorCorreo(correo: String): Boolean {
         return try {
             val methods = auth.fetchSignInMethodsForEmail(correo).await()
-            methods.signInMethods?.isNotEmpty() == true  // Devuelve true si el correo ya está registrado
-        } catch (e: FirebaseAuthException) {
-            false  // Devuelve false si hay un error
+            val existe = methods.signInMethods?.isNotEmpty() == true
+            Log.d("UsuarioRepository", "El correo $correo está registrado: $existe")
+            existe
+        } catch (e: Exception) {
+            Log.e("UsuarioRepository", "Error al verificar el correo: ${e.message}")
+            false
         }
     }
 }

@@ -27,6 +27,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : ComponentActivity() {
     private lateinit var usuarioRepository: UsuarioRepository
@@ -43,7 +44,7 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        usuarioRepository = UsuarioRepository(this)
+        usuarioRepository = UsuarioRepository()
 
         // Initialize Google Sign-In client
         googleSignInClient = GoogleSignIn.getClient(
@@ -144,7 +145,30 @@ class MainActivity : ComponentActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val user = firebaseAuth.currentUser
-                    Log.d("GoogleSignIn", "Logged in as: ${user?.displayName}")
+                    if (user != null) {
+                        // Guarda el usuario en Firestore
+                        val userData = hashMapOf(
+                            "correo" to user.email,
+                            "username" to (user.displayName ?: "Usuario"),
+                            "uid" to user.uid
+                        )
+                        FirebaseFirestore.getInstance()
+                            .collection("usuarios")
+                            .document(user.uid)
+                            .set(userData)
+                            .addOnSuccessListener {
+                                Log.d("Firestore", "Usuario guardado correctamente")
+                            }
+                            .addOnFailureListener { e ->
+                                Log.e("Firestore", "Error al guardar usuario: ${e.message}")
+                            }
+
+                        // Actualiza el estado de sesión
+                        setContent {
+                            val estaLogeado = remember { mutableStateOf(true) }
+                            val usuarioActual = remember { mutableStateOf(user.displayName ?: "Usuario") }
+                        }
+                    }
                 } else {
                     Log.e("GoogleSignIn", "Fallo en la autenticación con Firebase")
                 }

@@ -69,7 +69,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
 
     // Firebase BOM para gestionar las versiones de forma coherente
-    implementation(platform("com.google.firebase:firebase-bom:33.6.0")) // Cambia a la última versión disponible
+    implementation(platform("com.google.firebase:firebase-bom:33.7.0")) // Cambia a la última versión disponible
 
     // Dependencias de Firebase
     implementation("com.google.firebase:firebase-auth-ktx:23.1.0") // Firebase Authentication

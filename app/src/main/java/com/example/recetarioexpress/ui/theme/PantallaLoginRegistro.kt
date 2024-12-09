@@ -14,6 +14,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.recetarioexpress.R
 import com.example.recetarioexpress.data.UsuarioRepository
+import com.example.recetarioexpress.model.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,7 +30,7 @@ fun PantallaLoginRegistro(
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var mensajeError by remember { mutableStateOf("") }
-    var esRegistro by remember { mutableStateOf(false) }  // Cambiar entre registro e inicio de sesión
+    var esRegistro by remember { mutableStateOf(false) } // Cambiar entre registro e inicio de sesión
 
     Box(
         modifier = Modifier
@@ -93,14 +94,20 @@ fun PantallaLoginRegistro(
 
                 Button(
                     onClick = {
-                        // Inicia una coroutine para manejar la llamada suspend
                         CoroutineScope(Dispatchers.Main).launch {
                             if (password != confirmPassword) {
                                 mensajeError = "Las contraseñas no coinciden."
                             } else if (usuarioRepository.obtenerUsuarioPorCorreo(correo)) {
                                 mensajeError = "El correo ya está registrado. Intente iniciar sesión."
                             } else {
-                                val registroExitoso = usuarioRepository.registrarUsuario(correo, username, password)
+                                val user = User(
+                                    id = "0", // Cambiado a String
+                                    username = username,
+                                    email = correo,
+                                    password = password
+                                )
+
+                                val registroExitoso = usuarioRepository.registrarUsuario(user)
                                 if (registroExitoso) {
                                     mensajeError = "Registro exitoso. Ahora puede iniciar sesión."
                                     esRegistro = false
@@ -114,6 +121,7 @@ fun PantallaLoginRegistro(
                 ) {
                     Text("Registrar")
                 }
+
             } else {
                 TextField(
                     value = correo,
@@ -142,7 +150,8 @@ fun PantallaLoginRegistro(
                         CoroutineScope(Dispatchers.Main).launch {
                             val usuario = usuarioRepository.iniciarSesion(correo, password)
                             if (usuario != null) {
-                                onLoginExitoso(correo, usuario.displayName ?: "Usuario")  // Pasa la información del usuario
+                                val nombreUsuario = usuario.username ?: usuario.email ?: "Usuario" // Prioriza displayName, luego email
+                                onLoginExitoso(correo, nombreUsuario)
                             } else {
                                 mensajeError = "Correo o contraseña incorrectos."
                             }
@@ -152,6 +161,7 @@ fun PantallaLoginRegistro(
                 ) {
                     Text("Iniciar Sesión")
                 }
+
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -167,7 +177,6 @@ fun PantallaLoginRegistro(
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier.padding(8.dp)
                 ) {
-                    // Icono de Google
                     Image(
                         painter = painterResource(id = R.drawable.google_icon), // Asegúrate de tener este icono en tus recursos
                         contentDescription = "Google Logo",
@@ -184,4 +193,5 @@ fun PantallaLoginRegistro(
         }
     }
 }
+
 
